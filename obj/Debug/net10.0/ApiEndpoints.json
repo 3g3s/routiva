@@ -1,0 +1,70 @@
+[
+  {
+    "ContainingType": "Routiva.Controllers.Api.ChatController",
+    "Method": "Reply",
+    "RelativePath": "api/Chat/reply",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "body",
+        "Type": "Routiva.Controllers.Api.ChatController\u002BChatReplyRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Routiva.Controllers.Api.ChatController\u002BChatReplyResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Routiva.Controllers.Api.LogisticsController",
+    "Method": "CarrierSearch",
+    "RelativePath": "api/Logistics/carrier-search",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "body",
+        "Type": "Routiva.Controllers.Api.LogisticsController\u002BCarrierSearchRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Routiva.Controllers.Api.LogisticsController",
+    "Method": "Health",
+    "RelativePath": "api/Logistics/health",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Routiva.Controllers.Api.LogisticsController",
+    "Method": "LoadSearch",
+    "RelativePath": "api/Logistics/load-search",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "body",
+        "Type": "Routiva.Controllers.Api.LogisticsController\u002BVehicleSearchRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]
