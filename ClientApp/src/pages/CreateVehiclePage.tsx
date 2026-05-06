@@ -1,22 +1,44 @@
-import { ArrowRight, MapPin, Package, Truck } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { ArrowRight, Bus, MapPin, Package, Pin, Truck } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../auth/AuthContext'
 import { AppHeader } from '../components/AppHeader'
 import { RouteMapView } from '../components/RouteMapView'
 import { SiteFooter } from '../components/SiteFooter'
+import { AdrHazardMark } from '../components/AdrHazardMark'
 import { buildLoadListingQuery, CAPACITIES, loadCardsForVehicleSearch, VEHICLE_TYPES } from '../data/mock'
-import { CITIES, getCity } from '../lib/geo'
+import { CITIES, getCity, getNearestCityId } from '../lib/geo'
+import { fetchProfileRoute } from '../lib/profileRoute'
 
 export function CreateVehiclePage() {
+  const { user } = useAuth()
   const [fromId, setFromId] = useState('istanbul')
   const [toId, setToId] = useState('ankara')
   const [vehicleType, setVehicleType] = useState('tir')
   const [capacity, setCapacity] = useState('10 ton')
   const [searched, setSearched] = useState(false)
+  const [profileBaseLabel, setProfileBaseLabel] = useState<string | null>(null)
 
   const from = getCity(fromId)
   const to = getCity(toId)
   const vehicleLabel = VEHICLE_TYPES.find((v) => v.id === vehicleType)?.label ?? 'Tır'
+
+  useEffect(() => {
+    if (user?.role !== 'tasiyici') return
+    ;(async () => {
+      try {
+        const data = await fetchProfileRoute()
+        if (!data?.origin) return
+        setFromId(getNearestCityId(data.origin.lat, data.origin.lng))
+        setProfileBaseLabel(data.origin.label ?? `${data.origin.lat.toFixed(4)}, ${data.origin.lng.toFixed(4)}`)
+        if (data.destination) {
+          setToId(getNearestCityId(data.destination.lat, data.destination.lng))
+        }
+      } catch {
+        // ignore
+      }
+    })()
+  }, [user?.role])
 
   const matchedLoads = useMemo(
     () =>
@@ -37,23 +59,28 @@ export function CreateVehiclePage() {
       <AppHeader
         title="Araç İlanı Oluştur"
         subtitle="Boş kapasitenizi girin, uygun yükleri bulun"
-        userName="Mert İnce"
-        userRole="Taşıyıcı"
-        userInitial="M"
       />
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6">
-        <div className="rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm sm:p-5">
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6 lg:items-end">
+        <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-xl sm:p-6">
+          {profileBaseLabel && user?.role === 'tasiyici' ? (
+            <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">
+              <div className="flex items-center gap-2">
+                <Pin className="h-4 w-4" />
+                Haritadan seçilen konum ilanlarda kullanılacak: {profileBaseLabel}
+              </div>
+            </div>
+          ) : null}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6 lg:items-end">
             <label className="lg:col-span-1">
-              <span className="mb-1.5 flex items-center gap-1 text-xs font-medium text-slate-500">
-                <MapPin className="h-3.5 w-3.5 text-[var(--color-r-orange)]" />
+              <span className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--color-r-orange)]">
+                <MapPin className="h-4 w-4" strokeWidth={2} />
                 Nereden?
               </span>
               <select
                 value={fromId}
                 onChange={(e) => setFromId(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 outline-none ring-[var(--color-r-orange)] focus:ring-2"
+                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-medium text-slate-800 shadow-sm outline-none ring-[var(--color-r-orange)]/20 focus:ring-2"
               >
                 {CITIES.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -63,14 +90,14 @@ export function CreateVehiclePage() {
               </select>
             </label>
             <label className="lg:col-span-1">
-              <span className="mb-1.5 flex items-center gap-1 text-xs font-medium text-slate-500">
-                <MapPin className="h-3.5 w-3.5 text-[var(--color-r-orange)]" />
+              <span className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--color-r-orange)]">
+                <MapPin className="h-4 w-4" strokeWidth={2} />
                 Nereye?
               </span>
               <select
                 value={toId}
                 onChange={(e) => setToId(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 outline-none ring-[var(--color-r-orange)] focus:ring-2"
+                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-medium text-slate-800 shadow-sm outline-none ring-[var(--color-r-orange)]/20 focus:ring-2"
               >
                 {CITIES.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -80,11 +107,14 @@ export function CreateVehiclePage() {
               </select>
             </label>
             <label className="lg:col-span-1">
-              <span className="mb-1.5 text-xs font-medium text-slate-500">Araç Tipi</span>
+              <span className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--color-r-orange)]">
+                <Bus className="h-4 w-4" strokeWidth={2} />
+                Araç Tipi
+              </span>
               <select
                 value={vehicleType}
                 onChange={(e) => setVehicleType(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 outline-none ring-[var(--color-r-orange)] focus:ring-2"
+                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-medium text-slate-800 shadow-sm outline-none ring-[var(--color-r-orange)]/20 focus:ring-2"
               >
                 {VEHICLE_TYPES.map((v) => (
                   <option key={v.id} value={v.id}>
@@ -94,11 +124,14 @@ export function CreateVehiclePage() {
               </select>
             </label>
             <label className="lg:col-span-1">
-              <span className="mb-1.5 text-xs font-medium text-slate-500">Kapasite</span>
+              <span className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--color-r-orange)]">
+                <Package className="h-4 w-4" strokeWidth={2} />
+                Kapasite
+              </span>
               <select
                 value={capacity}
                 onChange={(e) => setCapacity(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 outline-none ring-[var(--color-r-orange)] focus:ring-2"
+                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-medium text-slate-800 shadow-sm outline-none ring-[var(--color-r-orange)]/20 focus:ring-2"
               >
                 {CAPACITIES.map((c) => (
                   <option key={c} value={c}>
@@ -108,6 +141,9 @@ export function CreateVehiclePage() {
               </select>
             </label>
             <div className="lg:col-span-2">
+              <span className="mb-2 hidden text-xs font-semibold uppercase tracking-wide text-transparent lg:block">
+                Ara
+              </span>
               <button
                 type="button"
                 onClick={() => {
@@ -123,9 +159,9 @@ export function CreateVehiclePage() {
                     }),
                   })
                 }}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--color-r-orange)] px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-[var(--color-r-orange-hover)]"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-r-orange)] px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-orange-500/20 transition hover:bg-[var(--color-r-orange-hover)]"
               >
-                → Yük Bul
+                Yük Bul
                 <ArrowRight className="h-4 w-4" />
               </button>
             </div>
@@ -133,7 +169,7 @@ export function CreateVehiclePage() {
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
-          <section className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
+          <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-lg">
             <h2 className="text-base font-semibold text-[var(--color-r-navy)]">Araç Özeti</h2>
             {!searched ? (
               <div className="mt-6 flex flex-col items-center py-6 text-center">
@@ -187,7 +223,7 @@ export function CreateVehiclePage() {
             )}
           </section>
 
-          <section className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
+          <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-lg">
             <h2 className="text-base font-semibold text-[var(--color-r-navy)]">Rota Haritası</h2>
             <div className="mt-4">
               <RouteMapView
@@ -204,7 +240,7 @@ export function CreateVehiclePage() {
           </section>
         </div>
 
-        <section className="mt-8 rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
+        <section className="mt-8 rounded-2xl border border-slate-100 bg-white p-5 shadow-lg">
           <h2 className="text-base font-semibold text-[var(--color-r-navy)]">Uygun Yükler</h2>
           {!searched ? (
             <div className="flex flex-col items-center py-14 text-center">
@@ -230,6 +266,12 @@ export function CreateVehiclePage() {
                         <Package className="h-4 w-4 shrink-0 text-[var(--color-r-orange)]" />
                         {load.kind}
                       </span>
+                      {/\bADR\b/i.test(load.kind) ? (
+                        <span className="inline-flex items-center gap-2 rounded-lg bg-red-50 px-2.5 py-1 text-xs font-bold text-red-700">
+                          <AdrHazardMark size="sm" />
+                          ADR
+                        </span>
+                      ) : null}
                       <div className="text-right text-xs sm:text-sm">
                         <p className="font-semibold text-slate-800">{load.weight}</p>
                         <p className="text-slate-500">{load.desi} desi</p>

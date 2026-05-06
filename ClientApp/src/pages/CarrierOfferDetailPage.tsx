@@ -1,7 +1,13 @@
 import { ArrowLeft, CheckCircle2, Clock, MapPin, Phone, Shield, Star, Truck, User } from 'lucide-react'
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
 import { SiteFooter } from '../components/SiteFooter'
-import { buildChatUrl, carrierOffersForSearch, parseCarrierOfferQuery } from '../data/mock'
+import {
+  buildChatUrl,
+  carrierOffersForSearch,
+  getVehicleImageByType,
+  getVehicleTypeById,
+  parseCarrierOfferQuery,
+} from '../data/mock'
 import { getCity } from '../lib/geo'
 
 export function CarrierOfferDetailPage() {
@@ -18,6 +24,8 @@ export function CarrierOfferDetailPage() {
 
   const from = getCity(parsed.fromId)
   const to = getCity(parsed.toId)
+  const vehicleType = getVehicleTypeById(offer.vehicleTypeId)
+  const vehicleImage = getVehicleImageByType(offer.vehicleTypeId)
 
   return (
     <div className="flex min-h-screen flex-col bg-[var(--color-r-bg)]">
@@ -32,7 +40,7 @@ export function CarrierOfferDetailPage() {
       </header>
 
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-lg sm:p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Taşıyıcı teklifi</p>
@@ -68,6 +76,55 @@ export function CarrierOfferDetailPage() {
             )}
           </div>
 
+          <div className="mt-6 overflow-hidden rounded-xl border border-slate-100 bg-slate-50">
+            <img
+              src={vehicleImage}
+              alt={`${vehicleType.label} görseli`}
+              className="h-44 w-full bg-white p-4 object-contain"
+              loading="lazy"
+            />
+            <div className="flex items-center justify-between gap-2 border-t border-slate-100 bg-white px-4 py-2.5">
+              <p className="text-xs font-medium text-slate-500">Araç tipi</p>
+              <p className="text-sm font-semibold text-[var(--color-r-navy)]">{vehicleType.label}</p>
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-xl border border-slate-100 bg-slate-50/80 p-4">
+              <p className="text-xs font-medium text-slate-500">Firma kimlik & logo</p>
+              <div className="mt-3 flex items-center gap-3">
+                <img
+                  src={offer.companyLogoUrl}
+                  alt={`${offer.company} logo`}
+                  className="h-14 w-14 rounded-xl bg-white object-cover"
+                  loading="lazy"
+                />
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold text-[var(--color-r-navy)]">{offer.company}</p>
+                  <p className="mt-0.5 text-xs font-semibold text-slate-500">Ticari kimlik</p>
+                </div>
+              </div>
+              <p className="mt-3 text-sm font-semibold text-slate-800">{offer.companyIdNumber}</p>
+            </div>
+
+            <div className="rounded-xl border border-slate-100 bg-slate-50/80 p-4">
+              <p className="text-xs font-medium text-slate-500">Sürücü kimlik & foto</p>
+              <div className="mt-3 flex items-center gap-3">
+                <img
+                  src={offer.driverPhotoUrl}
+                  alt={`${offer.driverName} foto`}
+                  className="h-14 w-14 rounded-xl bg-white object-cover"
+                  loading="lazy"
+                />
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold text-[var(--color-r-navy)]">{offer.driverName}</p>
+                  <p className="mt-0.5 text-xs font-semibold text-slate-500">TC kimlik numarası</p>
+                </div>
+              </div>
+              <p className="mt-3 text-sm font-semibold text-slate-800">{offer.driverIdNumber}</p>
+            </div>
+          </div>
+
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
             <div className="rounded-xl border border-slate-100 bg-slate-50/80 p-4">
               <p className="text-xs font-medium text-slate-500">Sizin aramanız</p>
@@ -87,7 +144,7 @@ export function CarrierOfferDetailPage() {
             <h2 className="text-sm font-semibold text-[var(--color-r-navy)]">Operasyon &amp; iletişim</h2>
             <p className="flex items-center gap-2 text-sm text-slate-700">
               <User className="h-4 w-4 text-slate-400" />
-              Sorumlu: {offer.contactName}
+              Sürücü: {offer.driverName}
             </p>
             <p className="flex items-center gap-2 text-sm text-slate-700">
               <Phone className="h-4 w-4 text-slate-400" />
@@ -97,7 +154,7 @@ export function CarrierOfferDetailPage() {
             </p>
             <p className="flex items-center gap-2 text-sm text-slate-700">
               <Truck className="h-4 w-4 text-slate-400" />
-              Çekici / dorse plaka: <span className="font-mono font-semibold">{offer.plate}</span>
+              {vehicleType.label} plaka: <span className="font-mono font-semibold">{offer.plate}</span>
             </p>
             <p className="flex items-start gap-2 text-sm text-slate-700">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />

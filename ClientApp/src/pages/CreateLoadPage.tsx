@@ -1,4 +1,4 @@
-import { ArrowRight, Box, Clock, MapPin, Package, Star, Truck } from 'lucide-react'
+import { ArrowRight, Box, Clock, MapPin, Package, Scale, Star, Truck } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AppHeader } from '../components/AppHeader'
@@ -52,23 +52,20 @@ export function CreateLoadPage() {
       <AppHeader
         title="Yük Oluştur"
         subtitle="Türkiye geneli yükünü gir, en uygun taşıyıcıları bul"
-        userName="Murat Yıldırım"
-        userRole="Yük Veren"
-        userInitial="M"
       />
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6">
-        <div className="rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm sm:p-5">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-12 xl:items-end">
+        <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-xl sm:p-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-12 xl:items-end">
             <label className="xl:col-span-2">
-              <span className="mb-1.5 flex items-center gap-1 text-xs font-medium text-slate-500">
-                <MapPin className="h-3.5 w-3.5 text-[var(--color-r-orange)]" />
+              <span className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--color-r-orange)]">
+                <MapPin className="h-4 w-4" strokeWidth={2} />
                 Nereden?
               </span>
               <select
                 value={fromId}
                 onChange={(e) => setFromId(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 outline-none ring-[var(--color-r-orange)] focus:ring-2"
+                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-medium text-slate-800 shadow-sm outline-none ring-[var(--color-r-orange)]/20 focus:ring-2"
               >
                 {CITIES.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -78,14 +75,14 @@ export function CreateLoadPage() {
               </select>
             </label>
             <label className="xl:col-span-2">
-              <span className="mb-1.5 flex items-center gap-1 text-xs font-medium text-slate-500">
-                <MapPin className="h-3.5 w-3.5 text-[var(--color-r-orange)]" />
+              <span className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--color-r-orange)]">
+                <MapPin className="h-4 w-4" strokeWidth={2} />
                 Nereye?
               </span>
               <select
                 value={toId}
                 onChange={(e) => setToId(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 outline-none ring-[var(--color-r-orange)] focus:ring-2"
+                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-medium text-slate-800 shadow-sm outline-none ring-[var(--color-r-orange)]/20 focus:ring-2"
               >
                 {CITIES.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -95,14 +92,14 @@ export function CreateLoadPage() {
               </select>
             </label>
             <label className="xl:col-span-4">
-              <span className="mb-1.5 flex items-center gap-1 text-xs font-medium text-slate-500">
-                <Package className="h-3.5 w-3.5 text-slate-400" />
+              <span className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--color-r-orange)]">
+                <Package className="h-4 w-4 text-[var(--color-r-orange)]" strokeWidth={2} />
                 Yük Tipi
               </span>
               <select
                 value={loadType}
                 onChange={(e) => setLoadType(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 outline-none ring-[var(--color-r-orange)] focus:ring-2"
+                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-medium text-slate-800 shadow-sm outline-none ring-[var(--color-r-orange)]/20 focus:ring-2"
               >
                 {LOAD_TYPES.map((l) => (
                   <option key={l.id} value={l.id}>
@@ -113,34 +110,40 @@ export function CreateLoadPage() {
               <p className="mt-1.5 text-[11px] leading-snug text-slate-500">{loadMeta.description}</p>
             </label>
             <label className="xl:col-span-2">
-              <span className="mb-1.5 text-xs font-medium text-slate-500">Ağırlık</span>
-              <div className="flex rounded-lg border border-slate-200 bg-white focus-within:ring-2 focus-within:ring-[var(--color-r-orange)]">
+              <span className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--color-r-orange)]">
+                <Scale className="h-4 w-4" strokeWidth={2} />
+                Ağırlık
+              </span>
+              <div className="flex overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm focus-within:ring-2 focus-within:ring-[var(--color-r-orange)]/25">
                 <input
                   type="number"
                   min={1}
                   step={1}
                   value={weightKg}
                   onChange={(e) => setWeightKg(e.target.value)}
-                  className="w-full min-w-0 rounded-l-lg border-0 bg-transparent px-3 py-2.5 text-sm font-medium outline-none"
+                  className="w-full min-w-0 border-0 bg-transparent px-3 py-3 text-sm font-medium outline-none"
                 />
-                <span className="flex items-center border-l border-slate-200 px-3 text-xs font-semibold text-slate-500">
+                <span className="flex items-center border-l border-slate-200 bg-slate-50/80 px-3 text-xs font-bold text-slate-500">
                   kg
                 </span>
               </div>
             </label>
             <label className="xl:col-span-2">
-              <span className="mb-1.5 text-xs font-medium text-slate-500">Hacim (desi)</span>
+              <span className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--color-r-orange)]">
+                <Box className="h-4 w-4" strokeWidth={2} />
+                Hacim (desi)
+              </span>
               <div className="flex flex-col gap-1">
-                <div className="flex rounded-lg border border-slate-200 bg-white focus-within:ring-2 focus-within:ring-[var(--color-r-orange)]">
+                <div className="flex overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm focus-within:ring-2 focus-within:ring-[var(--color-r-orange)]/25">
                   <input
                     type="number"
                     min={0}
                     step={0.1}
                     value={desi}
                     onChange={(e) => setDesi(e.target.value)}
-                    className="w-full min-w-0 rounded-l-lg border-0 bg-transparent px-3 py-2.5 text-sm font-medium outline-none"
+                    className="w-full min-w-0 border-0 bg-transparent px-3 py-3 text-sm font-medium outline-none"
                   />
-                  <span className="flex items-center border-l border-slate-200 px-3 text-xs font-semibold text-slate-500">
+                  <span className="flex items-center border-l border-slate-200 bg-slate-50/80 px-3 text-xs font-bold text-slate-500">
                     desi
                   </span>
                 </div>
@@ -150,10 +153,13 @@ export function CreateLoadPage() {
               </div>
             </label>
             <div className="sm:col-span-2 xl:col-span-2">
+              <span className="mb-2 hidden text-xs font-semibold uppercase tracking-wide text-transparent xl:block">
+                Ara
+              </span>
               <button
                 type="button"
                 onClick={handleSearch}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--color-r-orange)] px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-[var(--color-r-orange-hover)]"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-r-orange)] px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-orange-500/20 transition hover:bg-[var(--color-r-orange-hover)]"
               >
                 Taşıyıcı Ara
                 <ArrowRight className="h-4 w-4" />
@@ -163,7 +169,7 @@ export function CreateLoadPage() {
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
-          <section className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
+          <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-lg">
             <h2 className="text-base font-semibold text-[var(--color-r-navy)]">Yük Özeti</h2>
             {!searched ? (
               <div className="mt-6 flex flex-col items-center py-6 text-center">
@@ -222,7 +228,7 @@ export function CreateLoadPage() {
             )}
           </section>
 
-          <section className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
+          <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-lg">
             <h2 className="text-base font-semibold text-[var(--color-r-navy)]">Rota Haritası</h2>
             <div className="mt-4">
               <RouteMapView
@@ -245,7 +251,7 @@ export function CreateLoadPage() {
           </section>
         </div>
 
-        <section className="mt-8 rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
+        <section className="mt-8 rounded-2xl border border-slate-100 bg-white p-5 shadow-lg">
           <h2 className="text-base font-semibold text-[var(--color-r-navy)]">Teklifler</h2>
           {!searched ? (
             <div className="flex flex-col items-center py-14 text-center">

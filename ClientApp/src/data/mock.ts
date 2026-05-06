@@ -1,4 +1,9 @@
 import { getCity, routeLabel } from '../lib/geo'
+import frigoSilhouette from '../assets/vehicle-silhouettes/frigo.svg'
+import kamyonSilhouette from '../assets/vehicle-silhouettes/kamyon.svg'
+import kamyonetSilhouette from '../assets/vehicle-silhouettes/kamyonet.svg'
+import lowbedSilhouette from '../assets/vehicle-silhouettes/lowbed.svg'
+import tirSilhouette from '../assets/vehicle-silhouettes/tir.png'
 
 export const LOAD_TYPES = [
   {
@@ -99,6 +104,23 @@ export const VEHICLE_TYPES = [
   { id: 'lowbed', label: 'Lowbed' },
 ] as const
 
+export type VehicleTypeEntry = (typeof VEHICLE_TYPES)[number]
+
+export function getVehicleTypeById(id: string): VehicleTypeEntry {
+  return VEHICLE_TYPES.find((v) => v.id === id) ?? VEHICLE_TYPES[0]
+}
+
+export function getVehicleImageByType(vehicleTypeId: string): string {
+  const map: Record<string, string> = {
+    tir: tirSilhouette,
+    kamyon: kamyonSilhouette,
+    kamyonet: kamyonetSilhouette,
+    frigo: frigoSilhouette,
+    lowbed: lowbedSilhouette,
+  }
+  return map[vehicleTypeId] ?? map.tir
+}
+
 export const CAPACITIES = ['3 ton', '5 ton', '10 ton', '15 ton', '18 ton', '24 ton', '40 ton (TIR)'] as const
 
 /* ─── deterministik “rastgele” (aynı girdiler → aynı liste) ─── */
@@ -139,6 +161,24 @@ function routeDistanceKm(fromId: string, toId: string): number {
 function formatTl(n: number) {
   return `${n.toLocaleString('tr-TR')} TL`
 }
+
+function formatIdNumber(seedNumber: number, prefix = 'TR') {
+  // Demo için deterministik “kimlik/verg. no” üretir (11 haneli gibi görünür).
+  const base = Math.floor(seedNumber % 90000000000) // 0..89999999999
+  const digits = (base + 10000000000).toString().slice(-11)
+  return `${prefix} ${digits}`
+}
+
+function avatarLogoUrl(seed: string, background: string) {
+  // Proje demo amaçlı; görseller internet üzerinden.
+  return `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(seed)}&backgroundColor=${encodeURIComponent(background)}`
+}
+
+function avatarDriverUrl(seed: string, background: string) {
+  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(seed)}&backgroundColor=${encodeURIComponent(background)}`
+}
+
+const DRIVER_FULL_NAMES = ['Mehmet Yılmaz', 'Ahmet Şahin', 'Ayşe Demir', 'Burak Kaplan', 'Selin Koç', 'Can Şen'] as const
 
 const NAKLIYAT_SIRKET = [
   'Denizci Taşımacılık',
@@ -233,6 +273,8 @@ export type CarrierOfferDetail = {
   slot: number
   id: string
   company: string
+  companyIdNumber: string
+  companyLogoUrl: string
   route: string
   price: string
   priceValue: number
@@ -240,6 +282,9 @@ export type CarrierOfferDetail = {
   etaHours: number
   rating: number
   completedJobs: number
+  driverName: string
+  driverIdNumber: string
+  driverPhotoUrl: string
   plate: string
   phone: string
   contactName: string
@@ -249,8 +294,16 @@ export type CarrierOfferDetail = {
   validUntil: string
   notes: string
   loadTypeId: string
+  vehicleTypeId: string
   /** kullanıcı girdisiyle uyum */
   fitsCargo: boolean
+}
+
+function pickVehicleTypeForLoad(loadTypeId: string, rng: () => number): string {
+  if (loadTypeId === 'frigo') return 'frigo'
+  if (loadTypeId === 'proje') return 'lowbed'
+  const pool = ['tir', 'kamyon', 'kamyonet', 'tir', 'kamyon']
+  return pool[Math.floor(rng() * pool.length)] ?? 'tir'
 }
 
 /** Yük oluştur ekranı: kg + desi + rota + yük tipine göre teklif listesi (her seferinde farklı kombinasyon) */
@@ -283,6 +336,12 @@ export function carrierOffersForSearch(params: {
     const maxKg = Math.round(weightKg + 150 + rng() * 2200)
     const maxDesi = Math.round(desi + 8 + rng() * 120)
     const fitsCargo = maxKg >= weightKg && maxDesi >= desi
+    const vehicleTypeId = pickVehicleTypeForLoad(loadTypeId, rng)
+    const driverName = DRIVER_FULL_NAMES[Math.floor(rng() * DRIVER_FULL_NAMES.length)]
+    const companyIdNumber = formatIdNumber(seed + slot * 791 + Math.floor(rng() * 1000), 'TR')
+    const driverIdNumber = formatIdNumber(seed + slot * 353 + Math.floor(rng() * 1000), 'TR')
+    const companyLogoUrl = avatarLogoUrl(name, 'f37021')
+    const driverPhotoUrl = avatarDriverUrl(driverName, '0c1929')
     const plate = `${34 + Math.floor(rng() * 47)} ${String.fromCharCode(65 + Math.floor(rng() * 26))}${String.fromCharCode(65 + Math.floor(rng() * 26))} ${100 + Math.floor(rng() * 899)}`
     const phone = `+90 5${Math.floor(rng() * 9)}${Math.floor(rng() * 10)} ${100 + Math.floor(rng() * 900)} ${10 + Math.floor(rng() * 89)} ${10 + Math.floor(rng() * 89)}`
 
@@ -297,15 +356,21 @@ export function carrierOffersForSearch(params: {
       etaHours,
       rating: Math.round((3.6 + rng() * 1.35) * 10) / 10,
       completedJobs: 120 + Math.floor(rng() * 2400),
+      companyIdNumber,
+      companyLogoUrl,
+      driverName,
+      driverIdNumber,
+      driverPhotoUrl,
       plate,
       phone,
-      contactName: ['Ahmet Y.', 'Mehmet K.', 'Ayşe T.', 'Can D.', 'Selin M.', 'Burak L.'][Math.floor(rng() * 6)],
+      contactName: driverName,
       maxKg,
       maxDesi,
       insurance: rng() > 0.35 ? 'Tam kasko + yük sigortası' : 'Yük sigortası (temel)',
       validUntil: `Bugünden itibaren ${6 + Math.floor(rng() * 8)} gün`,
       notes: loadTypeCarrierNote(loadTypeId),
       loadTypeId,
+      vehicleTypeId,
       fitsCargo,
     })
   }

@@ -1,6 +1,7 @@
 import { ArrowLeft, MapPin, Package, Phone, Truck } from 'lucide-react'
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
 import { SiteFooter } from '../components/SiteFooter'
+import { AdrHazardMark } from '../components/AdrHazardMark'
 import { buildChatUrl, loadCardsForVehicleSearch, parseLoadListingQuery } from '../data/mock'
 
 export function LoadListingDetailPage() {
@@ -16,6 +17,7 @@ export function LoadListingDetailPage() {
   }
 
   const cap = parsed.capacityLabel
+  const isAdr = /\bADR\b/i.test(load.kind)
 
   return (
     <div className="flex min-h-screen flex-col bg-[var(--color-r-bg)]">
@@ -30,7 +32,7 @@ export function LoadListingDetailPage() {
       </header>
 
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-lg sm:p-8">
           <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Yük ilanı</p>
           <h1 className="mt-1 text-2xl font-bold text-[var(--color-r-navy)]">{load.company}</h1>
           <p className="mt-2 text-sm text-slate-600">{load.route}</p>
@@ -38,10 +40,16 @@ export function LoadListingDetailPage() {
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             <div className="rounded-xl border border-slate-100 bg-[var(--color-r-bg)] p-4">
               <p className="text-xs text-slate-500">Yük cinsi</p>
-              <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-slate-800">
-                <Package className="h-4 w-4 text-[var(--color-r-orange)]" />
-                {load.kind}
+              <p className="mt-1 flex items-start gap-3 text-sm font-semibold text-slate-800">
+                <Package className="mt-1 h-4 w-4 text-[var(--color-r-orange)]" />
+                <span className="leading-snug">{load.kind}</span>
               </p>
+              {isAdr ? (
+                <div className="mt-3 flex items-center gap-3">
+                  <AdrHazardMark size="sm" />
+                  <span className="text-xs font-bold tracking-wide text-red-700">ADR - Tehlikeli Madde</span>
+                </div>
+              ) : null}
             </div>
             <div className="rounded-xl border border-slate-100 bg-[var(--color-r-bg)] p-4">
               <p className="text-xs text-slate-500">Ağırlık &amp; hacim</p>

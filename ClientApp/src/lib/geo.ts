@@ -43,3 +43,22 @@ export function routeLabel(fromId: string, toId: string) {
   const b = getCity(toId)
   return `${a.label} → ${b.label}`
 }
+
+function approxDistanceKm(aLat: number, aLng: number, bLat: number, bLng: number) {
+  const dx = (aLat - bLat) * 111
+  const dy = (aLng - bLng) * 85
+  return Math.sqrt(dx * dx + dy * dy)
+}
+
+export function getNearestCityId(lat: number, lng: number): CityId {
+  let best: (typeof CITIES)[number] = CITIES[0]
+  let bestD = Number.POSITIVE_INFINITY
+  for (const c of CITIES) {
+    const d = approxDistanceKm(lat, lng, c.lat, c.lng)
+    if (d < bestD) {
+      bestD = d
+      best = c
+    }
+  }
+  return best.id
+}
