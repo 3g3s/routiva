@@ -5,7 +5,8 @@ import path from 'path'
 
 export default defineConfig(({ mode }) => ({
   plugins: [react(), tailwindcss()],
-  base: mode === 'production' ? '/spa/' : '/',
+  // BU SATIRI DEĞİŞTİRDİK: Canlıda alt klasör aramayı iptal ettik
+  base: '/', 
   build: {
     outDir: path.resolve(__dirname, '../wwwroot/spa'),
     emptyOutDir: true,
