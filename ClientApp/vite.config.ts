@@ -3,9 +3,9 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 
-export default defineConfig(({ mode }) => ({
+// Buradaki ({ mode }) kısmını sildik, dümdüz fonksiyon yaptık
+export default defineConfig(() => ({
   plugins: [react(), tailwindcss()],
-  // BU SATIRI DEĞİŞTİRDİK: Canlıda alt klasör aramayı iptal ettik
   base: '/', 
   build: {
     outDir: path.resolve(__dirname, '../wwwroot/spa'),
