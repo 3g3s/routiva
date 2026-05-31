@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+:root {
+  --color-r-orange: #f37021;
+  --color-r-orange-hover: #e0651c;
+  --color-r-navy: #0c1929;
+  --color-r-navy-soft: #152a45;
+  --color-r-blue-accent: #2563eb;
+
+  /* Theme tokens */
+  --bg-page: #f4f7f9;
+  --bg-card: #ffffff;
+  --text-main: #0c1929;
+  --text-muted: #475569;
+  --border-light: #e2e8f0;
+  --header-bg: #ffffff;
+}
+
+html.dark {
+  --bg-page: #080c16; /* Deep premium midnight blue */
+  --bg-card: #0f1626; /* Rich navy dark card */
+  --text-main: #f8fafc; /* High contrast white/slate-50 text */
+  --text-muted: #94a3b8; /* Slate-400 */
+  --border-light: #1e293b; /* Dark slate border */
+  --header-bg: #090d19; /* Dark header background */
+}
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-r-orange: #f37021;
+  --color-r-orange-hover: #e0651c;
+  --color-r-navy: var(--text-main); /* Headings using navy color will now automatically be white/light in dark mode! */
+  --color-r-navy-soft: var(--text-muted);
+  --color-r-blue-accent: #2563eb;
+  
+  --color-r-bg: var(--bg-page);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply font-sans antialiased text-[var(--text-main)] bg-[var(--bg-page)] transition-colors duration-300;
+    color: var(--text-main);
+    background-color: var(--bg-page);
+  }
+}
+
+.leaflet-container {
+  font-family: inherit;
+  @apply rounded-xl z-0;
+}
+
+/* Fix Leaflet default marker paths with bundlers */
+.leaflet-default-icon-path {
+  background-image: none !important;
+}
+
+/* --- Dark Mode Global Utility Overrides --- */
+html.dark .bg-white {
+  background-color: var(--bg-card) !important;
+}
+
+html.dark .text-slate-900,
+html.dark .text-slate-800 {
+  color: var(--text-main) !important;
+}
+
+html.dark .text-slate-700,
+html.dark .text-slate-600 {
+  color: var(--text-muted) !important;
+}
+
+html.dark .text-slate-500 {
+  color: #64748b !important; /* Muted but visible slate */
+}
+
+html.dark .border-slate-100,
+html.dark .border-slate-200,
+html.dark .border-slate-200\/80 {
+  border-color: var(--border-light) !important;
+}
+
+html.dark .hover\:bg-slate-50:hover,
+html.dark .hover\:bg-slate-100:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+html.dark .bg-slate-50,
+html.dark .bg-slate-50\/80,
+html.dark .bg-slate-100 {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Fix for profile badge background and icons */
+html.dark .bg-slate-50\/80 {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-light) !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #475569 !important;
+}
+
+/* Leaflet dark theme filter */
+html.dark .leaflet-tile-container {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+/* Orange badges and notice boxes overrides for dark mode readability */
+html.dark .bg-orange-50 {
+  background-color: rgba(243, 112, 33, 0.1) !important;
+  border-color: rgba(243, 112, 33, 0.25) !important;
+}
+
+html.dark .text-orange-900 {
+  color: #fdba74 !important;
+}
+
+html.dark .text-orange-900\/90 {
+  color: rgba(253, 186, 116, 0.8) !important;
+}
+

@@ -1,0 +1,43 @@
+# .NET Core
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio & VS Code
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.clw
+*.ncb
+*.aps
+
+# React / Node (ClientApp)
+node_modules/
+ClientApp/node_modules/
+ClientApp/dist/
+ClientApp/.svelte-kit/
+ClientApp/.next/
+ClientApp/out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+
+# Local Database & Settings
+*.db
+appsettings.local.json
+
+# Operating System Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
