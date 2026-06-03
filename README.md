@@ -180,7 +180,7 @@ postman/Routiva_API_Tests.postman_collection.json
 
 Canlı proje bağlantısı:
 
-https://routiva-kappa.vercel.app
+routiva-production-f9e5.up.railway.app
 
 ---
 
