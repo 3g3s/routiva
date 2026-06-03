@@ -1,0 +1,111 @@
+{
+  "info": {
+    "name": "Routiva API Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Professional API test collection for Routiva. Set collection variable baseUrl to backend URL."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5188" },
+    { "key": "email", "value": "qa{{$timestamp}}@routiva.test" },
+    { "key": "password", "value": "QaTest123!" }
+  ],
+  "item": [
+    {
+      "name": "Logistics Health",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/logistics/health" },
+      "event": [{
+        "listen": "test",
+        "script": { "exec": [
+          "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+          "pm.test('Service is ok', () => pm.expect(pm.response.json().status).to.eql('ok'));"
+        ]}
+      }]
+    },
+    {
+      "name": "Register Valid User",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/auth/register",
+        "body": { "mode": "raw", "raw": "{\n  \"displayName\": \"Postman QA\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"phone\": \"5551112233\",\n  \"role\": \"yukveren\"\n}" }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "exec": [
+          "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+          "const body = pm.response.json();",
+          "pm.test('Email exists', () => pm.expect(body.email).to.include('@'));",
+          "pm.test('Role is yukveren', () => pm.expect(body.role).to.eql('yukveren'));"
+        ]}
+      }]
+    },
+    {
+      "name": "Register Duplicate Email Should Fail",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/auth/register",
+        "body": { "mode": "raw", "raw": "{\n  \"displayName\": \"Postman QA\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"phone\": \"5551112233\",\n  \"role\": \"yukveren\"\n}" }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "exec": [
+          "pm.test('Duplicate returns 409 Conflict', () => pm.response.to.have.status(409));"
+        ]}
+      }]
+    },
+    {
+      "name": "Login Invalid User Should Fail",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": { "mode": "raw", "raw": "{\n  \"email\": \"notfound@routiva.test\",\n  \"password\": \"wrong\"\n}" }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "exec": [
+          "pm.test('Invalid login returns 401', () => pm.response.to.have.status(401));"
+        ]}
+      }]
+    },
+    {
+      "name": "Me Without Auth Should Fail",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/auth/me" },
+      "event": [{
+        "listen": "test",
+        "script": { "exec": [
+          "pm.test('Unauthorized returns 401', () => pm.response.to.have.status(401));"
+        ]}
+      }]
+    },
+    {
+      "name": "Carrier Search Demo",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/logistics/carrier-search",
+        "body": { "mode": "raw", "raw": "{\n  \"fromId\": \"istanbul\",\n  \"toId\": \"ankara\",\n  \"loadTypeId\": \"general\",\n  \"weightKg\": 1000,\n  \"desi\": 10\n}" }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "exec": [
+          "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+          "const body = pm.response.json();",
+          "pm.test('Matched true', () => pm.expect(body.matched).to.eql(true));",
+          "pm.test('Demo message exists', () => pm.expect(String(body.message).toLowerCase()).to.include('demo'));"
+        ]}
+      }]
+    },
+    {
+      "name": "Profile Route Without Auth Should Fail",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/profile/route" },
+      "event": [{
+        "listen": "test",
+        "script": { "exec": [
+          "pm.test('Unauthorized returns 401', () => pm.response.to.have.status(401));"
+        ]}
+      }]
+    }
+  ]
+}
