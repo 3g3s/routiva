@@ -18,6 +18,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { LandingHeader } from '../components/LandingHeader'
 import { SiteFooter } from '../components/SiteFooter'
+import { TurkeyMapSvg } from '../components/TurkeyMapSvg'
 
 const HERO_IMG =
   'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1920&q=80'
@@ -500,27 +501,19 @@ function LandingQuickLink({
 
 function TurkeyIllustration() {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100 p-8 shadow-inner">
-      <p className="text-center text-xs font-medium uppercase tracking-wide text-slate-400">Türkiye ağı</p>
-      <div className="relative mx-auto mt-6 aspect-[4/3] max-w-md">
-        <svg viewBox="0 0 400 300" className="h-full w-full text-slate-300" aria-hidden>
-          <path
-            fill="currentColor"
-            fillOpacity="0.15"
-            stroke="currentColor"
-            strokeWidth="1"
-            d="M80 200 Q120 80 200 100 T360 140 Q340 220 260 240 L100 230 Z"
-          />
-        </svg>
+    <div className="relative overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900/60 dark:to-slate-950/60 p-8 shadow-inner transition-colors duration-300">
+      <p className="text-center text-xs font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">Türkiye ağı</p>
+      <div className="relative mx-auto mt-6 aspect-[1005/490] max-w-md">
+        <TurkeyMapSvg className="h-full w-full opacity-70 dark:opacity-40" />
         <div className="absolute inset-0">
-          <RouteDot label="İstanbul" style={{ left: '18%', top: '42%' }} />
-          <RouteDot label="İzmir" style={{ left: '12%', top: '58%' }} />
-          <RouteDot label="Antalya" style={{ left: '22%', top: '72%' }} />
-          <RouteDot label="Gaziantep" style={{ left: '78%', top: '62%' }} />
-          <svg className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden>
-            <line x1="72" y1="126" x2="48" y2="174" stroke="#f37021" strokeWidth="2" strokeDasharray="4 6" />
-            <line x1="88" y1="126" x2="88" y2="216" stroke="#f37021" strokeWidth="2" strokeDasharray="4 6" />
-            <line x1="312" y1="186" x2="88" y2="126" stroke="#cbd5e1" strokeWidth="1.5" strokeDasharray="3 5" />
+          <RouteDot label="İstanbul" style={{ left: '21%', top: '24%' }} />
+          <RouteDot label="İzmir" style={{ left: '11%', top: '53%' }} />
+          <RouteDot label="Antalya" style={{ left: '28%', top: '73%' }} />
+          <RouteDot label="Gaziantep" style={{ left: '68%', top: '72%' }} />
+          <svg viewBox="0 0 1000 500" className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden>
+            <line x1="210" y1="120" x2="110" y2="265" stroke="#f37021" strokeWidth="3" strokeDasharray="5 7" />
+            <line x1="210" y1="120" x2="280" y2="365" stroke="#f37021" strokeWidth="3" strokeDasharray="5 7" />
+            <line x1="680" y1="360" x2="210" y2="120" stroke="#cbd5e1" strokeWidth="2.5" strokeDasharray="4 6" />
           </svg>
         </div>
       </div>
